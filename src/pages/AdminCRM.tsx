@@ -79,10 +79,12 @@ export default function AdminCRM() {
       "id", "created_at", "status", "first_name", "last_name", "email", "phone",
       "address", "city", "state", "zip", "claim_type", "incident_state",
       "description", "consent", "trusted_form_cert_url", "trusted_form_ping_url",
-      "page_url", "user_agent", "notes",
+      "page_url", "user_agent", "notes", "call_id", "call_status", "call_outcome",
+      "call_end_reason", "call_duration_sec", "call_summary", "call_transcript",
+      "call_recording_path", "call_completed_at",
     ];
     const esc = (v: any) => {
-      const s = v === null || v === undefined ? "" : String(v);
+      const s = v === null || v === undefined ? "" : typeof v === "object" ? JSON.stringify(v) : String(v);
       return `"${s.replace(/"/g, '""')}"`;
     };
     const csv = [cols.join(","), ...filtered.map((r) => cols.map((c) => esc(r[c])).join(","))].join("\n");

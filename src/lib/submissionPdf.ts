@@ -136,6 +136,26 @@ export function generateSubmissionPdf(s: Submission) {
     ["User agent", s.user_agent ?? ""],
   ]);
 
+  const hasCallResult = Boolean(
+    s.call_id || s.call_status || s.call_outcome || s.call_end_reason ||
+    s.call_duration_sec != null || s.call_summary || s.call_transcript ||
+    s.call_recording_path || s.call_completed_at
+  );
+  if (hasCallResult) {
+    section("Call Result");
+    rows([
+      ["Call ID", s.call_id ?? ""],
+      ["Status", s.call_status ?? ""],
+      ["Outcome", s.call_outcome ?? ""],
+      ["End reason", s.call_end_reason ?? ""],
+      ["Duration", s.call_duration_sec == null ? "" : `${s.call_duration_sec} seconds`],
+      ["Completed", s.call_completed_at ? format(new Date(s.call_completed_at), "PPpp") : ""],
+      ["Summary", s.call_summary ?? ""],
+      ["Transcript", s.call_transcript == null ? "" : JSON.stringify(s.call_transcript, null, 2)],
+      ["Recording", s.call_recording_path ? `Available (private storage path: ${s.call_recording_path})` : "Not available"],
+    ]);
+  }
+
   if (s.notes) {
     section("Internal Notes");
     rows([["Notes", s.notes]]);

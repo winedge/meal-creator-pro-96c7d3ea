@@ -9,6 +9,8 @@
 
 - [x] Forward new leads securely to AIMedicalls immediately, preserving CRM records and exact consent wording; API acceptance verified with a test lead (202).
 
+- [x] Include call-result fields in CRM CSV exports and PDF dockets without changing lead submission.
+
 - [x] Meta Pixel + Google Ads conversion tracking, manual config (no connectors)
   - [x] Admin → Ad Tracking tab for Meta Pixel ID, CAPI token, Google AW-ID + label, master switch
   - [x] Consent route: no banner, tags blocked in EEA/UK/CH and unresolved regions
