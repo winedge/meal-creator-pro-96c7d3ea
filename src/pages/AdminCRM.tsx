@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Download, FileText, LogOut, Search, Trash2, ExternalLink } from "lucide-react";
+import { Download, FileText, LogOut, Search, Trash2, ExternalLink, RefreshCw } from "lucide-react";
 import { format } from "date-fns";
 import { generateSubmissionPdf, type Submission } from "@/lib/submissionPdf";
 import logo from "@/assets/medinjuryclaims-logo.png";
@@ -163,9 +163,14 @@ export default function AdminCRM() {
               {filtered.length} of {rows.length} record{rows.length === 1 ? "" : "s"}
             </p>
           </div>
-          <Button onClick={exportCsv} className="bg-navy hover:bg-navy-deep text-primary-foreground">
-            <Download className="h-4 w-4 mr-2" /> Export CSV
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={() => void load()} disabled={fetching}>
+              <RefreshCw className={`h-4 w-4 mr-2 ${fetching ? "animate-spin" : ""}`} /> Refresh
+            </Button>
+            <Button onClick={exportCsv} className="bg-navy hover:bg-navy-deep text-primary-foreground">
+              <Download className="h-4 w-4 mr-2" /> Export CSV
+            </Button>
+          </div>
         </div>
 
 
@@ -219,6 +224,7 @@ export default function AdminCRM() {
                   <th className="px-4 py-3 font-semibold">Contact</th>
                   <th className="px-4 py-3 font-semibold">Claim</th>
                   <th className="px-4 py-3 font-semibold">Location</th>
+                  <th className="px-4 py-3 font-semibold">Call result</th>
                   <th className="px-4 py-3 font-semibold">Cert</th>
                   <th className="px-4 py-3 font-semibold">Status</th>
                   <th className="px-4 py-3 font-semibold text-right">Actions</th>
@@ -226,9 +232,9 @@ export default function AdminCRM() {
               </thead>
               <tbody className="divide-y divide-border">
                 {fetching ? (
-                  <tr><td colSpan={8} className="p-8 text-center text-muted-foreground">Loading…</td></tr>
+                  <tr><td colSpan={9} className="p-8 text-center text-muted-foreground">Loading…</td></tr>
                 ) : filtered.length === 0 ? (
-                  <tr><td colSpan={8} className="p-8 text-center text-muted-foreground">No submissions match your filters.</td></tr>
+                  <tr><td colSpan={9} className="p-8 text-center text-muted-foreground">No submissions match your filters.</td></tr>
                 ) : filtered.map((r) => (
                   <tr key={r.id} className="hover:bg-surface/50">
                     <td className="px-4 py-3 whitespace-nowrap text-xs text-muted-foreground">
@@ -244,6 +250,29 @@ export default function AdminCRM() {
                     <td className="px-4 py-3 text-xs">
                       {[r.city, r.state].filter(Boolean).join(", ") || "-"}<br />
                       <span className="text-muted-foreground">{r.zip}</span>
+                    </td>
+                    <td className="px-4 py-3 text-xs">
+                      {r.call_completed_at || r.call_status || r.call_outcome ? (
+                        <div className="space-y-1">
+                          <div className="font-semibold text-navy">
+                            {r.call_completed_at || r.call_status?.toLowerCase() === "completed"
+                              ? "Call completed"
+                              : r.call_status || "Call result received"}
+                          </div>
+                          {r.call_outcome && <div className="text-muted-foreground">{r.call_outcome}</div>}
+                          {r.call_duration_sec != null && (
+                            <div className="text-muted-foreground">{r.call_duration_sec} sec</div>
+                          )}
+                          <div className={r.call_recording_path ? "font-medium text-brand-red" : "text-muted-foreground"}>
+                            {r.call_recording_path ? "Recording available" : "No recording"}
+                          </div>
+                        </div>
+                      ) : (
+                        <div>
+                          <div className="font-medium text-muted-foreground">Waiting for result</div>
+                          <div className="mt-1 text-[10px] text-muted-foreground">Refresh to check for updates</div>
+                        </div>
+                      )}
                     </td>
                     <td className="px-4 py-3">
                       {r.trusted_form_cert_url ? (

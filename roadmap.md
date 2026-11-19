@@ -1,11 +1,11 @@
 # Roadmap
 
-- [ ] Receive AIMedicalls call results
+- [x] Receive AIMedicalls call results
   - [x] Add call-result columns and private admin-only recording storage
   - [x] Add external_id and admin call-result display
   - [x] Install uploaded callback file and webhook configuration
   - [x] Securely collect AIMEDICALLS_CALLBACK_SECRET after receiver is installed
-  - [ ] Verify signed callback end-to-end (waiting for AIMedicalls callback setup)
+  - [x] Verify signed callback end-to-end (a completed call result and private recording were received for a submitted lead)
 
 - [x] Forward new leads securely to AIMedicalls immediately, preserving CRM records and exact consent wording; API acceptance verified with a test lead (202).
 
