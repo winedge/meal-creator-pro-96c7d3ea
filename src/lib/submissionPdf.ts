@@ -24,6 +24,15 @@ export type Submission = {
   notes: string | null;
   created_at: string;
   updated_at: string;
+  call_id: string | null;
+  call_status: string | null;
+  call_outcome: string | null;
+  call_end_reason: string | null;
+  call_duration_sec: number | null;
+  call_summary: string | null;
+  call_transcript: unknown;
+  call_recording_path: string | null;
+  call_completed_at: string | null;
 };
 
 const NAVY: [number, number, number] = [15, 30, 65];

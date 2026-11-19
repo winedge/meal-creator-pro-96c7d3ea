@@ -17,6 +17,7 @@ export default function AdminSubmission() {
   const [row, setRow] = useState<Submission | null>(null);
   const [notes, setNotes] = useState("");
   const [busy, setBusy] = useState(false);
+  const [recordingUrl, setRecordingUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && (!session || !isAdmin)) nav("/admin/login", { replace: true });
@@ -33,6 +34,27 @@ export default function AdminSubmission() {
       }
     })();
   }, [id, isAdmin]);
+
+  useEffect(() => {
+    if (!isAdmin || !row?.call_recording_path) {
+      setRecordingUrl(null);
+      return;
+    }
+
+    let cancelled = false;
+    void supabase.storage.from("call-recordings")
+      .createSignedUrl(row.call_recording_path, 3600)
+      .then(({ data, error }) => {
+        if (cancelled) return;
+        if (error) {
+          toast.error("Unable to load the call recording");
+          return;
+        }
+        setRecordingUrl(data.signedUrl);
+      });
+
+    return () => { cancelled = true; };
+  }, [isAdmin, row?.call_recording_path]);
 
   const saveNotes = async () => {
     if (!row) return;
@@ -53,6 +75,12 @@ export default function AdminSubmission() {
       <div className="text-[10px] uppercase tracking-widest text-muted-foreground">{label}</div>
       <div className={`mt-1 text-sm text-navy break-words ${mono ? "font-mono text-xs" : ""}`}>{value || "-"}</div>
     </div>
+  );
+
+  const hasCallResult = Boolean(
+    row.call_id || row.call_status || row.call_outcome || row.call_end_reason ||
+    row.call_duration_sec !== null || row.call_summary || row.call_transcript ||
+    row.call_recording_path || row.call_completed_at
   );
 
   return (
@@ -122,6 +150,36 @@ export default function AdminSubmission() {
               <Save className="h-4 w-4 mr-2" /> {busy ? "Saving…" : "Save notes"}
             </Button>
           </div>
+
+          {hasCallResult && (
+            <section className="border border-border bg-background p-6 shadow-sm lg:col-span-2" aria-labelledby="call-result-title">
+              <h2 id="call-result-title" className="font-serif text-lg font-bold text-navy border-b-2 border-brand-red pb-2 mb-2">Call result</h2>
+              <Field label="Status" value={row.call_status} />
+              <Field label="Outcome" value={row.call_outcome} />
+              <Field label="End reason" value={row.call_end_reason} />
+              <Field label="Duration" value={row.call_duration_sec == null ? null : `${row.call_duration_sec} seconds`} />
+              <Field label="Completed" value={row.call_completed_at ? format(new Date(row.call_completed_at), "PPpp") : null} />
+              <Field label="Summary" value={row.call_summary} />
+              {row.call_transcript != null && (
+                <details className="mt-4 border-t border-border pt-4">
+                  <summary className="cursor-pointer text-sm font-semibold text-navy">Transcript</summary>
+                  <pre className="mt-3 max-h-96 overflow-auto whitespace-pre-wrap break-words bg-muted p-4 text-xs text-foreground">
+                    {JSON.stringify(row.call_transcript, null, 2)}
+                  </pre>
+                </details>
+              )}
+              {row.call_recording_path && (
+                <div className="mt-4 border-t border-border pt-4">
+                  <div className="mb-2 text-[10px] uppercase tracking-widest text-muted-foreground">Recording</div>
+                  {recordingUrl ? (
+                    <audio controls preload="none" className="w-full" src={recordingUrl}>
+                      Your browser does not support audio playback.
+                    </audio>
+                  ) : <div className="text-sm text-muted-foreground">Loading recording…</div>}
+                </div>
+              )}
+            </section>
+          )}
         </div>
       </main>
     </div>
