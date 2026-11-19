@@ -4,8 +4,8 @@
   - [x] Add call-result columns and private admin-only recording storage
   - [x] Add external_id and admin call-result display
   - [x] Install uploaded callback file and webhook configuration
-  - [ ] Securely collect AIMEDICALLS_CALLBACK_SECRET after receiver is installed
-  - [ ] Verify signed callback end-to-end (waiting for the secret and AIMedicalls callback setup)
+  - [x] Securely collect AIMEDICALLS_CALLBACK_SECRET after receiver is installed
+  - [ ] Verify signed callback end-to-end (waiting for AIMedicalls callback setup)
 
 - [x] Forward new leads securely to AIMedicalls immediately, preserving CRM records and exact consent wording; API acceptance verified with a test lead (202).
 
