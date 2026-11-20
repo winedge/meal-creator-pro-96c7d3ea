@@ -80,6 +80,11 @@ Deno.serve(async (req) => {
     call_transcript: p.transcript ?? null,
     call_recording_path: recordingPath,
     call_completed_at: p.ended_at ?? new Date().toISOString(),
+    // CRM record built from the call (status such as QUALIFIED_CALLBACK / HUMAN_REVIEW_REQUIRED / NO_ANSWER,
+    // the intake answers, which criteria were not met and notes for the human reviewer).
+    call_crm_status: p.crm_status ?? null,
+    call_intake: p.intake ?? null,
+    call_attempt: typeof p.attempt === 'number' ? p.attempt : null,
   }).eq('id', submissionId);
   if (error) { console.error('submission update failed', error.message); return reply({ error: 'Unable to save call result' }, 500); }
 

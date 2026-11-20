@@ -66,10 +66,13 @@ export type Database = {
           aimedicalls_http_status: number | null
           aimedicalls_sent_at: string | null
           aimedicalls_status: string | null
+          call_attempt: number | null
           call_completed_at: string | null
+          call_crm_status: string | null
           call_duration_sec: number | null
           call_end_reason: string | null
           call_id: string | null
+          call_intake: Json | null
           call_outcome: string | null
           call_recording_path: string | null
           call_status: string | null
@@ -104,10 +107,13 @@ export type Database = {
           aimedicalls_http_status?: number | null
           aimedicalls_sent_at?: string | null
           aimedicalls_status?: string | null
+          call_attempt?: number | null
           call_completed_at?: string | null
+          call_crm_status?: string | null
           call_duration_sec?: number | null
           call_end_reason?: string | null
           call_id?: string | null
+          call_intake?: Json | null
           call_outcome?: string | null
           call_recording_path?: string | null
           call_status?: string | null
@@ -142,10 +148,13 @@ export type Database = {
           aimedicalls_http_status?: number | null
           aimedicalls_sent_at?: string | null
           aimedicalls_status?: string | null
+          call_attempt?: number | null
           call_completed_at?: string | null
+          call_crm_status?: string | null
           call_duration_sec?: number | null
           call_end_reason?: string | null
           call_id?: string | null
+          call_intake?: Json | null
           call_outcome?: string | null
           call_recording_path?: string | null
           call_status?: string | null
